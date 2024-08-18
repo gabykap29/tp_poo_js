@@ -1,14 +1,15 @@
-import { crtlProducts } from "../controllers/product.controllers.js";
+import ProductCtrl from "../controllers/product.controllers.js";
 import { Router } from "express";
 const router = Router();
 
+const productCrtl = new ProductCtrl();
 //apis
-router.get("/products", crtlProducts.getProducts);
+router.get("/products", productCrtl.getProducts);
 
-router.get("/products/:id", crtlProducts.getProduct);
+router.get("/products/:id", productCrtl.getProduct);
 
-router.post("/products", crtlProducts.createProduct);
+router.post("/products", productCrtl.createProduct);
 
-router.put("/products/:id", crtlProducts.updateProduct);
+router.put("/products/:id", productCrtl.updateProduct);
 
 export default router;

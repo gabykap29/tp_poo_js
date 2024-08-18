@@ -47,11 +47,7 @@ class ProductService {
       new: true,
     });
     if (!updateProduct) {
-      throw {
-        statusCode: 400,
-        status: "Required fields missing",
-        message: "Campos requeridos faltantes",
-      };
+      throw new Error("field required");
     }
     await updateProduct.save();
     return updateProduct;
