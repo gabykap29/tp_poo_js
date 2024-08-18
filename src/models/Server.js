@@ -4,6 +4,9 @@ import morgan from "morgan";
 import { PORT } from "../config/config.js";
 import { connectDB } from "../db/database.js";
 import routerProduct from "../routes/product.routes.js";
+import routerUser from "../routes/user.routes.js";
+import routerSales from "../routes/sales.routes.js";
+import routerCart from "../routes/cart.routes.js";
 
 class Server {
   constructor() {
@@ -24,6 +27,9 @@ class Server {
   }
   routes() {
     this.app.use("/api/", routerProduct);
+    this.app.use("/api/", routerUser);
+    this.app.use("/api/", routerSales);
+    this.app.use("/api/", routerCart);
   }
   listen() {
     this.app.listen(this.port, () => {

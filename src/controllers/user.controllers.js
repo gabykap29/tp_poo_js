@@ -15,9 +15,10 @@ class UserCtrl {
   constructor() {
     this.userService = new UserService();
   }
+
   async getUsers(req, res) {
     try {
-      const users = await userService.getAll();
+      const users = await this.userService.getAll();
       return res.status(200).json(users);
     } catch (error) {
       if (error.message.includes("users not found")) {
@@ -33,10 +34,12 @@ class UserCtrl {
       });
     }
   }
-  async createUSer(req, res) {
+
+  async createUser(req, res) {
+    // Cambiado el nombre del método aquí
     try {
       const body = req.body;
-      const newUser = await userService.create(body);
+      const newUser = await this.userService.create(body);
       return res.status(201).json({
         status: 201,
         message: messages.created,
@@ -55,10 +58,11 @@ class UserCtrl {
       });
     }
   }
+
   async getUser(req, res) {
     try {
       const id = req.params.id;
-      const user = await userService.getOne(id);
+      const user = await this.userService.getOne(id);
       return res.status(200).json(user);
     } catch (error) {
       if (error.message.includes("user not found")) {
@@ -74,11 +78,12 @@ class UserCtrl {
       });
     }
   }
+
   async updateUser(req, res) {
     try {
       const id = req.params.id;
       const body = req.body;
-      await userService.update(id, body);
+      await this.userService.update(id, body);
       return res.status(200).json({
         status: 200,
         message: messages.updated,
@@ -97,10 +102,11 @@ class UserCtrl {
       });
     }
   }
+
   async deleteUser(req, res) {
     try {
       const id = req.params.id;
-      await userService.delete(id);
+      await this.userService.delete(id);
       return res.status(200).json({
         status: 200,
         message: messages.deleted,
@@ -120,3 +126,5 @@ class UserCtrl {
     }
   }
 }
+
+export default UserCtrl;
