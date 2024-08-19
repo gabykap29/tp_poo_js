@@ -3,89 +3,98 @@ import Cart from "../models/Cart.js";
 class CartService {
   constructor() {}
 
-  async createCart(userId) {
-    try {
-      const cart = await Cart.create({ userId });
-      if (!cart) {
-        throw new Error("failed to create cart");
-      }
-      return cart;
-    } catch (error) {
-      console.log(error);
-      throw new Error("server internal error while creating cart");
-    }
-  }
   async getCart(userId) {
     try {
       const cart = await Cart.findOne({ userId });
       if (!cart) {
-        throw new Error("cart not found");
+        throw new Error("Cart not found");
       }
       return cart;
     } catch (error) {
-      console.log(error);
-      throw new Error("server internal error while getting cart");
+      console.error("Error in getCart:", error.message);
+      throw error;
     }
   }
-  async addItemToCart(userId, item) {
+
+  async addItemToCart(userId, items) {
     try {
-      const cart = await Cart.findOne({ userId });
-      if (!cart) {
-        throw new Error("cart not found");
+      // Verificar que items es un array
+      if (!Array.isArray(items) || items.length === 0) {
+        throw new Error("Items must be a non-empty array");
       }
-      cart.items.push(item);
-      cart.totalPrice += item.price;
-      await cart.save();
+
+      // Buscar el carrito del usuario
+      let cart = await Cart.findOne({ userId });
+
+      // Si no existe, crear uno nuevo
+      if (!cart) {
+        const totalPrice = items.reduce(
+          (total, item) => total + (item.price || 0) * (item.quantity || 1),
+          0,
+        );
+
+        cart = await Cart.create({
+          userId,
+          items,
+          totalPrice,
+        });
+      } else {
+        // Actualizar los ítems en el carrito existente
+        items.forEach((item) => {
+          const existingItem = cart.items.find(
+            (i) => i.productId.toString() === item.productId.toString(),
+          );
+
+          if (existingItem) {
+            existingItem.quantity += item.quantity || 1;
+            existingItem.price = item.price;
+          } else {
+            cart.items.push(item);
+          }
+        });
+
+        // Recalcular el precio total
+        cart.totalPrice = cart.items.reduce(
+          (total, item) => total + (item.price || 0) * (item.quantity || 1),
+          0,
+        );
+
+        await cart.save();
+      }
+
       return cart;
     } catch (error) {
-      console.log(error);
-      throw new Error("server internal error while adding item to cart");
+      console.error("Error in addItemToCart:", error.message);
+      throw new Error("Internal server error while adding item to cart");
     }
   }
-  async removeItemFromCart(userId, productId) {
+
+  async clearCart(cartId) {
     try {
-      const cart = await Cart.findOne({ userId });
+      const cart = await Cart.findOne({ _id: cartId });
       if (!cart) {
-        throw new Error("cart not found");
-      }
-      const item = cart.items.find((item) => item.productId === productId);
-      if (!item) {
-        throw new Error("item not found");
-      }
-      cart.totalPrice -= item.price;
-      cart.items = cart.items.filter((item) => item.productId !== productId);
-      await cart.save();
-      return cart;
-    } catch (error) {
-      console.log(error);
-      throw new Error("server internal error while removing item from cart");
-    }
-  }
-  async clearCart(userId) {
-    try {
-      const cart = await Cart.findOne({ userId });
-      if (!cart) {
-        throw new Error("cart not found");
+        throw new Error("Cart not found");
       }
       cart.items = [];
       cart.totalPrice = 0;
       await cart.save();
       return cart;
     } catch (error) {
-      console.log(error);
-      throw new Error("server internal error while clearing cart");
+      console.error("Error in clearCart:", error.message);
+      throw error;
     }
   }
+
   async deleteCart(userId) {
     try {
       const cart = await Cart.findOneAndDelete({ userId });
       if (!cart) {
-        throw new Error("cart not found");
+        throw new Error("Cart not found");
       }
       return cart;
     } catch (error) {
-      console.log(error);
-      throw new Error("server internal error while deleting");
+      console.error("Error in deleteCart:", error.message);
+      throw error;
     }
   }
 }

@@ -6,13 +6,13 @@ class UserService {
   async getAll() {
     try {
       const users = await User.find();
-      if (!users) {
+      if (!users.length) {
         throw new Error("users not found");
       }
       return users;
     } catch (error) {
-      console.log(error);
-      throw new Error("server internal error while getting users");
+      console.error(error);
+      throw error;
     }
   }
 
@@ -24,38 +24,34 @@ class UserService {
       }
       return newUser;
     } catch (error) {
-      console.log(error);
-      throw new Error("server internal error while getting users");
+      console.error(error);
+      throw error;
     }
   }
 
   async getOne(id) {
     try {
-      const user = await User.findOne({
-        _id: id,
-      });
+      const user = await User.findOne({ _id: id });
       if (!user) {
         throw new Error("user not found");
       }
       return user;
     } catch (error) {
-      console.log(error);
-      throw new Error("server internal error while getting user");
+      console.error(error);
+      throw error;
     }
   }
+
   async update(id, user) {
     try {
-      const updateUser = await User.findByIdAndUpdate(id, user, {
-        new: true,
-      });
+      const updateUser = await User.findByIdAndUpdate(id, user, { new: true });
       if (!updateUser) {
         throw new Error("failed to update user");
       }
-      await updateUser.save();
       return updateUser;
     } catch (error) {
-      console.log(error);
-      throw new Error("server internal error while getting user");
+      console.error(error);
+      throw error;
     }
   }
 
@@ -67,8 +63,8 @@ class UserService {
       }
       return user;
     } catch (error) {
-      console.log(error);
-      throw new Error("server internal error while deleting");
+      console.error(error);
+      throw error;
     }
   }
 }

@@ -6,59 +6,68 @@ class ProductService {
   async getAll() {
     try {
       const products = await Product.find();
-      if (!products) {
-        return false;
+      if (!products || !products.length) {
+        throw new Error("Products not found");
       }
       return products;
     } catch (error) {
-      console.log(error);
-      return false;
+      console.error(error);
+      throw error;
     }
   }
+
   async getOne(id) {
     try {
-      const product = await Product.findOne({
-        _id: id,
-      });
+      const product = await Product.findOne({ _id: id });
       if (!product) {
-        return false;
+        throw new Error("Product not found");
       }
       return product;
     } catch (error) {
-      console.log(error);
-      return false;
+      console.error(error);
+      throw error;
     }
   }
+
   async create(product) {
     try {
       const newProduct = await Product.create(product);
       if (!newProduct) {
-        return false;
+        throw new Error("Failed to create product");
       }
       return newProduct;
     } catch (error) {
-      console.log(error);
-      return false;
+      console.error(error);
+      throw error;
     }
   }
 
   async update(id, product) {
-    const updateProduct = await Product.findByIdAndUpdate(id, product, {
-      new: true,
-    });
-    if (!updateProduct) {
-      throw new Error("field required");
+    try {
+      const updateProduct = await Product.findByIdAndUpdate(id, product, {
+        new: true,
+      });
+      if (!updateProduct) {
+        throw new Error("Failed to update product");
+      }
+      return updateProduct;
+    } catch (error) {
+      console.error(error);
+      throw error;
     }
-    await updateProduct.save();
-    return updateProduct;
   }
-  async delete(id) {
-    const product = await Product.findByIdAndDelete(id);
-    if (!product) {
-      return false;
-    }
 
-    return product;
+  async delete(id) {
+    try {
+      const product = await Product.findByIdAndDelete(id);
+      if (!product) {
+        throw new Error("Failed to delete product");
+      }
+      return product;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   }
 }
 

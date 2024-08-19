@@ -1,16 +1,22 @@
 import CartCrtl from "../controllers/cart.controllers.js";
 import { Router } from "express";
-
+import {
+  cartValidation,
+  validateRecord,
+} from "../models/SchemasValidator/CartSchema.js";
 const router = Router();
 
 const cartCtrl = new CartCrtl();
 
-router.post("/:userId", cartCtrl.createCart);
+router.get("/cart/:userId", cartCtrl.getCart.bind(cartCtrl));
 
-router.get("/:userId", cartCtrl.getCart);
+router.post(
+  "/cart/:userId/add",
+  cartValidation,
+  validateRecord,
+  cartCtrl.addItemToCart.bind(cartCtrl),
+);
 
-router.post("/:userId/add", cartCtrl.addItemToCart);
-
-router.delete("/:userId/remove/:productId", cartCtrl.removeItemFromCart);
+router.put("/cart/clear/:cartId", cartCtrl.clearCart.bind(cartCtrl));
 
 export default router;

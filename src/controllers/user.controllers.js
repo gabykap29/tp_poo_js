@@ -2,13 +2,13 @@ import UserService from "../services/UserService.js";
 
 const messages = {
   internalError: "Error interno del servidor",
-  notFound: "Aun no hay usuarios cargados!",
+  notFound: "Usuario no encontrado!",
   notCreated: "Error al crear el usuario",
-  created: "Usuario creado con exito",
+  created: "Usuario creado con éxito",
   notUpdated: "Error al intentar actualizar el usuario",
-  updated: "Usuario actualizado con exito!",
-  notDeleted: "Error al intentar eliminar el Usuario",
-  deleted: "Usuario eliminado con exito!",
+  updated: "Usuario actualizado con éxito!",
+  notDeleted: "Error al intentar eliminar el usuario",
+  deleted: "Usuario eliminado con éxito!",
 };
 
 class UserCtrl {
@@ -21,12 +21,6 @@ class UserCtrl {
       const users = await this.userService.getAll();
       return res.status(200).json(users);
     } catch (error) {
-      if (error.message.includes("users not found")) {
-        return res.status(404).json({
-          status: 404,
-          message: messages.notFound,
-        });
-      }
       console.log(error);
       return res.status(500).json({
         status: 500,
@@ -36,21 +30,15 @@ class UserCtrl {
   }
 
   async createUser(req, res) {
-    // Cambiado el nombre del método aquí
     try {
       const body = req.body;
       const newUser = await this.userService.create(body);
       return res.status(201).json({
         status: 201,
         message: messages.created,
+        data: newUser,
       });
     } catch (error) {
-      if (error.message.includes("failed to create user")) {
-        return res.status(400).json({
-          status: 400,
-          message: messages.notCreated,
-        });
-      }
       console.log(error);
       return res.status(500).json({
         status: 500,
@@ -66,12 +54,13 @@ class UserCtrl {
       return res.status(200).json(user);
     } catch (error) {
       if (error.message.includes("user not found")) {
+        console.log("entró");
         return res.status(404).json({
           status: 404,
           message: messages.notFound,
         });
       }
-      console.log(error);
+      console.log("esto es error.message: ", error.message);
       return res.status(500).json({
         status: 500,
         message: messages.internalError,
@@ -83,13 +72,14 @@ class UserCtrl {
     try {
       const id = req.params.id;
       const body = req.body;
-      await this.userService.update(id, body);
+      const updatedUser = await this.userService.update(id, body);
       return res.status(200).json({
         status: 200,
         message: messages.updated,
+        data: updatedUser,
       });
     } catch (error) {
-      if (error.message.includes("failed to update user")) {
+      if (error.message === "failed to update user") {
         return res.status(400).json({
           status: 400,
           message: messages.notUpdated,
@@ -106,13 +96,14 @@ class UserCtrl {
   async deleteUser(req, res) {
     try {
       const id = req.params.id;
-      await this.userService.delete(id);
+      const deletedUser = await this.userService.delete(id);
       return res.status(200).json({
         status: 200,
         message: messages.deleted,
+        data: deletedUser,
       });
     } catch (error) {
-      if (error.message.includes("failed to delete user")) {
+      if (error.message === "failed to delete user") {
         return res.status(400).json({
           status: 400,
           message: messages.notDeleted,

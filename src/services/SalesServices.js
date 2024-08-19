@@ -3,56 +3,63 @@ import Sales from "../models/Sales.js";
 class SalesService {
   constructor() {}
 
+  // Crear una nueva venta
   async createSale(sale) {
     try {
+      // Crear la venta en la base de datos
       const newSale = await Sales.create(sale);
       if (!newSale) {
-        throw new Error("failed to create sale");
+        throw new Error("Failed to create sale");
       }
       return newSale;
     } catch (error) {
-      console.log(error);
-      throw new Error("server internal error while creating sale");
+      console.error("Error in createSale:", error.message);
+      throw new Error("Failed to create sale");
     }
   }
+
+  // Obtener todas las ventas
   async getSales() {
     try {
+      // Obtener todas las ventas
       const sales = await Sales.find();
-      if (!sales) {
-        throw new Error("sales not found");
+      if (!sales || sales.length === 0) {
+        throw new Error("Sales not found");
       }
       return sales;
     } catch (error) {
-      console.log(error);
-      throw new Error("server internal error while getting sales");
+      console.error("Error in getSales:", error.message);
+      throw new Error("Failed to retrieve sales");
     }
   }
+
+  // Obtener una venta por ID
   async getSale(id) {
     try {
-      const sale = await Sales.findOne({
-        _id: id,
-      });
+      // Buscar una venta por ID
+      const sale = await Sales.findById(id);
       if (!sale) {
-        throw new Error("sale not found");
+        throw new Error("Sale not found");
       }
       return sale;
     } catch (error) {
-      console.log(error);
-      throw new Error("server internal error while getting sale");
+      console.error("Error in getSale:", error.message);
+      throw new Error("Failed to retrieve sale");
     }
   }
+
+  // Encontrar ventas por ID de usuario
   async findSalesByUser(userId) {
     try {
-      const sales = await Sales.find({
-        userId,
-      });
-      if (!sales) {
-        throw new Error("sales not found");
+      // Buscar ventas por ID de usuario
+      const sales = await Sales.find({ userId });
+      if (!sales || sales.length === 0) {
+        throw new Error("Sales not found");
       }
       return sales;
     } catch (error) {
-      console.log(error);
-      throw new Error("server internal error while getting sales");
+      console.error("Error in findSalesByUser:", error.message);
+      throw new Error("Failed to retrieve sales for user");
     }
   }
 }
