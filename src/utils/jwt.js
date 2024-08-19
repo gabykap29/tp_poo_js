@@ -13,3 +13,16 @@ export const createToken = (user) => {
     throw error;
   }
 };
+
+export const decodedToken = (token) => {
+  try {
+    const decoded = jsonwebtoken.verify(token, JWT_SECRET);
+    if (!decoded) {
+      throw new Error("Failed to decode token");
+    }
+    return decoded;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};

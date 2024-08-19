@@ -1,4 +1,5 @@
 import UserService from "../services/UserService.js";
+import { checkRolAdmin } from "../middlewares/checkRol.js";
 
 const messages = {
   internalError: "Error interno del servidor",
@@ -18,6 +19,14 @@ class UserCtrl {
 
   async getUsers(req, res) {
     try {
+      const token = req.headers.authorization;
+      const isAdmin = checkRolAdmin(token);
+      if (!isAdmin) {
+        return res.status(401).json({
+          status: 401,
+          message: "No tienes permisos para acceder a esta ruta",
+        });
+      }
       const users = await this.userService.getAll();
       return res.status(200).json(users);
     } catch (error) {
@@ -31,6 +40,15 @@ class UserCtrl {
 
   async createUser(req, res) {
     try {
+      const token = req.headers.authorization;
+      const isAdmin = checkRolAdmin(token);
+      if (!isAdmin) {
+        return res.status(401).json({
+          status: 401,
+          message: "No tienes permisos para acceder a esta ruta",
+        });
+      }
+
       const body = req.body;
       const newUser = await this.userService.create(body);
       return res.status(201).json({
@@ -49,6 +67,14 @@ class UserCtrl {
 
   async getUser(req, res) {
     try {
+      const token = req.headers.authorization;
+      const isAdmin = checkRolAdmin(token);
+      if (!isAdmin) {
+        return res.status(401).json({
+          status: 401,
+          message: "No tienes permisos para acceder a esta ruta",
+        });
+      }
       const id = req.params.id;
       const user = await this.userService.getOne(id);
       return res.status(200).json(user);
@@ -70,6 +96,15 @@ class UserCtrl {
 
   async updateUser(req, res) {
     try {
+      const token = req.headers.authorization;
+      const isAdmin = checkRolAdmin(token);
+      if (!isAdmin) {
+        return res.status(401).json({
+          status: 401,
+          message: "No tienes permisos para acceder a esta ruta",
+        });
+      }
+
       const id = req.params.id;
       const body = req.body;
       const updatedUser = await this.userService.update(id, body);
@@ -95,6 +130,14 @@ class UserCtrl {
 
   async deleteUser(req, res) {
     try {
+      const token = req.headers.authorization;
+      const isAdmin = checkRolAdmin(token);
+      if (!isAdmin) {
+        return res.status(401).json({
+          status: 401,
+          message: "No tienes permisos para acceder a esta ruta",
+        });
+      }
       const id = req.params.id;
       const deletedUser = await this.userService.delete(id);
       return res.status(200).json({

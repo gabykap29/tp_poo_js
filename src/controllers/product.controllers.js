@@ -1,4 +1,5 @@
 import ProductService from "../services/ProductService.js";
+import { checkRolSeller } from "../middlewares/checkRol.js";
 
 const messages = {
   internalError: "Error interno del servidor",
@@ -18,6 +19,14 @@ class ProductCtrl {
 
   async getProducts(req, res) {
     try {
+      const token = req.headers.authorization;
+      const isSeller = checkRolSeller(token);
+      if (!isSeller) {
+        return res.status(401).json({
+          status: 401,
+          message: "No tienes permisos para acceder a esta ruta",
+        });
+      }
       const products = await this.productService.getAll();
       return res.status(200).json(products);
     } catch (error) {
@@ -37,6 +46,14 @@ class ProductCtrl {
 
   async createProduct(req, res) {
     try {
+      const token = req.headers.authorization;
+      const isSeller = checkRolSeller(token);
+      if (!isSeller) {
+        return res.status(401).json({
+          status: 401,
+          message: "No tienes permisos para acceder a esta ruta",
+        });
+      }
       const body = req.body;
       const newProduct = await this.productService.create(body);
       return res.status(201).json({
@@ -61,6 +78,14 @@ class ProductCtrl {
 
   async getProduct(req, res) {
     try {
+      const token = req.headers.authorization;
+      const isSeller = checkRolSeller(token);
+      if (!isSeller) {
+        return res.status(401).json({
+          status: 401,
+          message: "No tienes permisos para acceder a esta ruta",
+        });
+      }
       const product = await this.productService.getOne(req.params.id);
       return res.status(200).json(product);
     } catch (error) {
@@ -80,6 +105,14 @@ class ProductCtrl {
 
   async updateProduct(req, res) {
     try {
+      const token = req.headers.authorization;
+      const isSeller = checkRolSeller(token);
+      if (!isSeller) {
+        return res.status(401).json({
+          status: 401,
+          message: "No tienes permisos para acceder a esta ruta",
+        });
+      }
       const { id } = req.params;
       const body = req.body;
       const product = await this.productService.getOne(id);
@@ -106,6 +139,14 @@ class ProductCtrl {
 
   async deleteProduct(req, res) {
     try {
+      const token = req.headers.authorization;
+      const isSeller = checkRolSeller(token);
+      if (!isSeller) {
+        return res.status(401).json({
+          status: 401,
+          message: "No tienes permisos para acceder a esta ruta",
+        });
+      }
       const { id } = req.params;
       const product = await this.productService.delete(id);
       return res.status(200).json({

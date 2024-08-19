@@ -1,5 +1,6 @@
 import AuthService from "../services/AuhService.js";
 import { createToken } from "../utils/jwt.js";
+
 class AuthCtrl {
   constructor() {
     this.authService = new AuthService();
@@ -30,9 +31,8 @@ class AuthCtrl {
   async register(req, res) {
     try {
       const user = req.body;
-
+      req.body.role = "client";
       const newUser = await this.authService.register(user);
-
       return res.status(201).json(newUser);
     } catch (error) {
       console.error("Error registering:", error.message);

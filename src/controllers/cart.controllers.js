@@ -1,5 +1,5 @@
 import CartService from "../services/CartService.js";
-
+import { checkRolClient } from "../middlewares/checkRol.js";}
 class CartCrtl {
   constructor() {
     this.cartService = new CartService();
@@ -7,6 +7,14 @@ class CartCrtl {
 
   async getCart(req, res) {
     try {
+      const token = req.headers.authorization;
+      const isClient = checkRolClient(token);
+      if(!isClient){
+        return res.status(401).json({
+          status: 401,
+          message: "No tienes permisos para acceder a esta ruta",
+        });
+      }
       const userId = req.params.userId;
       const cart = await this.cartService.getCart(userId);
       return res.status(200).json(cart);
@@ -21,6 +29,14 @@ class CartCrtl {
 
   async addItemToCart(req, res) {
     try {
+      const token = req.headers.authorization;
+      const isClient = checkRolClient(token);
+      if(!isClient){
+        return res.status(401).json({
+          status: 401,
+          message: "No tienes permisos para acceder a esta ruta",
+        });
+      }
       const userId = req.params.userId;
       const items = req.body.items;
 
@@ -44,6 +60,14 @@ class CartCrtl {
 
   async clearCart(req, res) {
     try {
+      const token = req.headers.authorization;
+      const isClient = checkRolClient(token);
+      if(!isClient){
+        return res.status(401).json({
+          status: 401,
+          message: "No tienes permisos para acceder a esta ruta",
+        });
+      }
       const cardId = req.params.cartId;
       console.log(cardId);
       const cart = await this.cartService.clearCart(cardId);

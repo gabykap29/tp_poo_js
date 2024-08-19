@@ -1,5 +1,6 @@
 import SalesService from "../services/SalesServices.js";
-
+import { checkRolSeller } from "../middlewares/checkRol.js";
+import { checkRolAdmin } from "../middlewares/checkRol.js";
 class SalesCtrl {
   constructor() {
     this.salesService = new SalesService();
@@ -7,6 +8,14 @@ class SalesCtrl {
 
   async createSale(req, res) {
     try {
+      const token = req.headers.authorization;
+      const isSeller = checkRolSeller(token);
+      if (!isSeller) {
+        return res.status(401).json({
+          status: 401,
+          message: "No tienes permisos para acceder a esta ruta",
+        });
+      }
       const sale = req.body;
 
       const newSale = await this.salesService.createSale(sale);
@@ -22,6 +31,14 @@ class SalesCtrl {
 
   async getSales(req, res) {
     try {
+      const token = req.headers.authorization;
+      const isSeller = checkRolSeller(token);
+      if (!isSeller) {
+        return res.status(401).json({
+          status: 401,
+          message: "No tienes permisos para acceder a esta ruta",
+        });
+      }
       const sales = await this.salesService.getSales();
       return res.status(200).json(sales);
     } catch (error) {
@@ -35,6 +52,14 @@ class SalesCtrl {
 
   async getSale(req, res) {
     try {
+      const token = req.headers.authorization;
+      const isSeller = checkRolSeller(token);
+      if (!isSeller) {
+        return res.status(401).json({
+          status: 401,
+          message: "No tienes permisos para acceder a esta ruta",
+        });
+      }
       const id = req.params.id;
       const sale = await this.salesService.getSale(id);
       return res.status(200).json(sale);
@@ -49,6 +74,15 @@ class SalesCtrl {
 
   async findSalesByUser(req, res) {
     try {
+      const token = req.headers.authorization;
+      const isAdmin = checkRolAdmin(token);
+      if (!isAdmin) {
+        return res.status(401).json({
+          status: 401,
+          message: "No tienes permisos para acceder a esta ruta",
+        });
+      }
+
       const userId = req.params.userId;
       const sales = await this.salesService.findSalesByUser(userId);
       return res.status(200).json(sales);
