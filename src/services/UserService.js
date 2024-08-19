@@ -5,7 +5,7 @@ class UserService {
 
   async getAll() {
     try {
-      const users = await User.find();
+      const users = await User.find().select("-pass");
       if (!users.length) {
         throw new Error("users not found");
       }
@@ -18,20 +18,28 @@ class UserService {
 
   async create(user) {
     try {
-      const newUser = await User.create(user);
+      const body = user;
+      const newUser = await User.create({
+        name: body.name,
+        lastname: body.lastname,
+        username: body.username,
+        pass: bcrypt.hashSync(body.pass, 10),
+        role: body.role,
+      });
+
       if (!newUser) {
         throw new Error("failed to create user");
       }
       return newUser;
     } catch (error) {
-      console.error(error);
+      console.log(error);
       throw error;
     }
   }
 
   async getOne(id) {
     try {
-      const user = await User.findOne({ _id: id });
+      const user = await User.findOne({ _id: id }).select("-pass");
       if (!user) {
         throw new Error("user not found");
       }
