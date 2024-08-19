@@ -5,6 +5,7 @@ export const userValidation = [
   body("lastname").isString().isLength({ min: 3 }),
   body("username").isString().isLength({ min: 3 }),
   body("pass").isString().isLength({ min: 5 }),
+  body("role").isString().isLength({ min: 3 }),
 ];
 //validar campos de usuario, si no cumple con las validaciones, se envia un mensaje de error
 export const validateRecord = (req, res, next) => {
