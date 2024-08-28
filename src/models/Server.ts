@@ -1,15 +1,17 @@
-import express from "express";
+import express, { Application } from "express";
 import cors from "cors";
 import morgan from "morgan";
-import { PORT } from "../config/config.js";
-import { connectDB } from "../db/database.js";
-import routerProduct from "../routes/product.routes.js";
+import { PORT } from "../config/config";
+import { connectDB } from "../db/database";
+import routerProduct from "../routes/product.routes";
 import routerUser from "../routes/user.routes.js";
 import routerSales from "../routes/sales.routes.js";
 import routerCart from "../routes/cart.routes.js";
 import routerAuth from "../routes/auth.routes.js";
 
 class Server {
+  private app: Application;
+  private port: number;
   constructor() {
     this.app = express();
     this.port = PORT;

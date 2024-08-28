@@ -1,4 +1,4 @@
-import ProductCtrl from "../controllers/product.controllers.js";
+import ProductCtrl from "../controllers/product.controllers";
 import { Router } from "express";
 import {
   productValidation,
